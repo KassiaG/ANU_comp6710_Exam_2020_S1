@@ -52,7 +52,24 @@ public class Q1FamilyTree {
      * <code>targetName</code>, or null if no such individual is found
      */
     public static String getAncestry(Individual ancestor, String targetName) {
+        // If the ancestor is the target individual, return their name only
+        if(ancestor.name.matches(targetName)){
+            return ancestor.name;
+        }
+        // If the ancestor has no children, target individual is not found
+        if (ancestor.children == null){
+            return null;
+        }
+        // Recursively search through the ancestor's children
+        for(Individual child: ancestor.children){
+            String result = getAncestry(child, targetName);
+            if(result != null){
+                // If the target individual was found in this child's ancestry,
+                // add the child's name and return the result
+                return result  + " born of " +  ancestor.name;
+            }
+        }
         // FIXME complete this method
-        return "";
+        return null;
     }
 }

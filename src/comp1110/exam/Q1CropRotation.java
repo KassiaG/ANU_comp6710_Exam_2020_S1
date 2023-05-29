@@ -66,7 +66,69 @@ public class Q1CropRotation {
      * given number of seasons
      */
     public static Set<List<Vegetable>> getAllRotations(Set<Vegetable> crops, int seasons) {
-        // FIXME complete this method
-        return null;
+            List<Vegetable> used = new ArrayList<>();          // vegetables used so far in a given search
+            Set<List<Vegetable>> rotations = new HashSet<>();  // rotations found so far
+
+        /* If there are no crops or no seasons or the number of seasons is
+           greater than the number of crops, return an empty list. */
+            if (crops.isEmpty() || seasons == 0 || seasons > crops.size()) {
+                return Collections.emptySet();
+            }
+            // Try all possible starting crops
+            for (Vegetable crop : crops) {
+                used.add(crop);
+                getFixedRotation(crops, seasons, used, rotations);
+                used.remove(crop);
+            }
+            return rotations;
+            // FIXME complete this method
+        }
+
+
+    /**
+     * Recursive method to find all rotations given a starting crop.
+     *
+     * @param crops as above
+     * @param seasons as above
+     * @param used crops already used (in the order in which they are used)
+     * @param rotations all rotations found so far.
+     */
+    private static void getFixedRotation(Set<Vegetable> crops, int seasons, List<Vegetable> used,
+                                         Set<List<Vegetable>> rotations) {
+        // Base case: found a valid rotation
+        if (used.size() == seasons) {
+            rotations.add(new ArrayList<>(used));
+            return;
+        }
+        for (Vegetable crop : crops) {
+            if (!used.contains(crop) && canFollow(used.get(used.size() - 1), crop)) {
+                used.add(crop);
+                getFixedRotation(crops, seasons, used, rotations);
+                used.remove(used.size() - 1);
+            }
+        }
+
+    }
+
+    /**
+     * Determine whether one vegetable can follow another
+     *
+     * @param first the first vegetable
+     * @param next the next vegetable
+     * @return true if next can follow first
+     */
+    private static boolean canFollow(Vegetable first, Vegetable next) {
+        switch (first.group) {
+            case LEGUME:
+                return next.group == Group.BRASSICA;
+            case BRASSICA:
+                return next.group == Group.ALLIUM;
+            case ALLIUM:
+                return next.group == Group.FRUITING;
+            case FRUITING:
+                return next.group == Group.LEGUME;
+            default:
+                return false;
+        }
     }
 }

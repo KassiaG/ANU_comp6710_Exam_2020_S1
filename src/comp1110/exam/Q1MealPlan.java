@@ -1,5 +1,7 @@
 package comp1110.exam;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -65,8 +67,75 @@ public class Q1MealPlan {
      * @return the set of all possible meal plans of the provided foods for the
      * given number of meals
      */
+    //generates all possible meal plans given a set of foods and the number of meals
     public static Set<List<Food>> getAllMealPlans(Set<Food> foods, int numMeals) {
         // FIXME complete this method
-        return null;
+        //initializes an empty set to store the meal plans
+        Set<List<Food>> mealPlans = new HashSet<>();
+        //A meal plan is a sequence of foods that are eaten sequentially.
+        //set up empty current meal plan to keep track of the current plan being generated
+        List<Food> currentPlan = new ArrayList<>();
+        //generate the meal plans recursively
+        generateMealPlans(foods, numMeals, currentPlan, mealPlans);
+        return mealPlans;
     }
-}
+
+    private static void generateMealPlans(Set<Food> foods, int numMeals, List<Food> currentPlan, Set<List<Food>> mealPlans) {
+        //base case
+        // the desired number of meals has been reached
+        if (numMeals == 0) {//the current plan is added to the set of meal plans
+            mealPlans.add(new ArrayList<>(currentPlan));
+            return;
+        }
+        for(Food food : foods){
+            if(isValidNextMeal(food, currentPlan)){
+                //if it is valid, add to current plan
+                currentPlan.add(food);
+                Set<Food> remainingFoods = new HashSet<>(foods);
+                //removes it from the set of remaining foods
+                remainingFoods.remove(food);
+                //makes a recursive call to generate the remaining meal plans with one less meal
+                generateMealPlans(remainingFoods, numMeals - 1, currentPlan, mealPlans);
+                //removes the last food added to the current plan to backtrack and try other food options
+                currentPlan.remove(currentPlan.size() - 1);
+
+            }
+        }
+    }
+
+    private static boolean isValidNextMeal(Food food, List<Food> currentPlan) {
+        if (currentPlan.isEmpty()) {
+            return true;
+        }
+        Food lastFood = currentPlan.get(currentPlan.size() - 1);
+
+        switch (lastFood.meal) {
+            case BREAKFAST:
+                return food.meal == Meal.LUNCH;
+            case LUNCH:
+                return food.meal == Meal.DINNER;
+            case DINNER:
+                return food.meal == Meal.DESSERT;
+            case DESSERT:
+                return food.meal == Meal.BREAKFAST;
+            default:
+                return false;
+        }
+    }
+        public static void main(String[] args) {
+            Set<Food> foods = new HashSet<>();
+            foods.add(new Food("Cake", Meal.DESSERT));
+            foods.add(new Food("Vegetable Soup", Meal.LUNCH));
+            foods.add(new Food("Waffles", Meal.BREAKFAST));
+            foods.add(new Food("Potato Gratin", Meal.DINNER));
+
+            int numMeals = 4;
+            Set<List<Food>> mealPlans = getAllMealPlans(foods, numMeals);
+
+            for (List<Food> mealPlan : mealPlans) {
+                System.out.println(mealPlan);
+            }
+        }
+    }
+
+
