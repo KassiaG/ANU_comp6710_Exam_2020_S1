@@ -32,6 +32,30 @@ public class Q1Rain {
      */
     public static int avg(int[] in) {
         // FIXME complete this method
-        return 0;
-    }
+        // Initialize variables to keep track of sum and count
+        int sum = 0;
+        int count =0;
+        //An array element is 'included' if:
+        //      a) it is greater than or equal to zero, and
+        //      b) it appears earlier in the array than the MAGIC number (999)
+        // Iterate through the array
+        for (int i = 0; i < in.length; i++) {
+            // Check if the element meets the 'included' conditions
+            if (in[i] >= 0 && in[i] != MAGIC) {
+                // If it does, add it to the sum and increment the count
+                sum += in[i];
+                count++;
+            } else if (in[i] == MAGIC) {
+                // If we encounter the MAGIC number, break out of the loop
+                break;
+            }
+        }// Check if there are included values in the array
+            if(count > 0){
+                // Calculate the average using integer division and return it
+                return sum / count;
+            } else {
+                // If there are no included values, return -1
+                return -1;
+            }
+        }
 }

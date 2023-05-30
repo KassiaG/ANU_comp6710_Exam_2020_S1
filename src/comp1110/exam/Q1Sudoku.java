@@ -68,7 +68,56 @@ public class Q1Sudoku {
      */
     public static int[][] solve(int[][] setup) {
         // FIXME complete this method
-        int[][] partial = setup.clone();
-        return partial;
+        int[][] solution = setup.clone();
+        if(solveSudoku(solution)){// Return the solved puzzle
+        return solution;
+    }else{
+            return null;// No solution exists
+        }
+}
+
+    private static boolean solveSudoku(int[][] puzzle) {
+        for (int row = 0; row < SIDE_LENGTH; row++) {
+            for (int col = 0; col < SIDE_LENGTH; col++) {
+                if(puzzle[row][col] == 0){
+                    for (int num = 1; num <= 9 ; num++) {
+                        if(isValidPlacement(puzzle, row, col, num)){
+                            puzzle[row][col] = num;
+                            // Try placing the number
+                            if(solveSudoku(puzzle)){
+                                return true;// Found a solution
+                            }else{
+                                puzzle[row][col] = 0;
+                                // Backtrack if solution not found
+                            }
+                        }
+                    }
+                    return false; // No valid number can be placed
+                }
+
+            }
+
+        }
+        return true;// All cells filled (puzzle solved)
+    }
+
+    private static boolean isValidPlacement(int[][] puzzle, int row, int col, int num) {
+        // Check row and column constraints
+        for (int i = 0; i < SIDE_LENGTH; i++) {
+            if(puzzle[row][i] == num || puzzle[i][col] == num){
+                return false; // Invalid placement
+            }
+        }
+        // Check subgrid constraints
+        int subgridStartRow = (row / 3) * 3;
+        int subgridStartCol = (col / 3) * 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (puzzle[subgridStartRow + i][subgridStartCol + j] == num) {
+                    return false; // Invalid placement
+                }
+            }
+        }
+        return true; // Valid placement
     }
 }
