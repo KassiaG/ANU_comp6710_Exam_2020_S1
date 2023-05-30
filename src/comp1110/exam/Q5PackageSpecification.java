@@ -43,7 +43,13 @@ public class Q5PackageSpecification {
      */
     @Override
     public int hashCode() {
-        return new Random().nextInt(2); // FIXME complete this method
+        int totalAlphaNumeric =0;
+        if (this.name != null){
+            for (int i = 0; i < this.name.length(); i++) {
+                totalAlphaNumeric += this.name.charAt(i)*Math.pow(10,i);
+            }
+        }
+        return (totalAlphaNumeric)* (int)Math.abs(Math.log(this.majorVersionNumber)) + this.majorVersionNumber + this.minorVersionNumber; // FIXME complete this method
     }
 
     /**
@@ -52,7 +58,12 @@ public class Q5PackageSpecification {
      */
     @Override
     public boolean equals(Object object) {
-        return false; // FIXME complete this method
+        if (this == null && object == null){
+            return true;
+        } else if (this == null || object == null) {
+            return false;
+        }
+        return this.hashCode() == object.hashCode(); // FIXME complete this method
     }
 
     @Override

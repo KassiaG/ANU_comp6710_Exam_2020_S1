@@ -16,12 +16,22 @@ import java.util.EmptyStackException;
  * java.util.EmptyStackException.
  */
 public class Q4ArrayStack<T> {
+
+    private Object[] data;
+    private int elements;
+    /**
+     * Create an empty stack.
+     */
+    public Q4ArrayStack(){
+        data = new Object[10]; // initial capacity of 10
+        elements = 0;
+    }
     /**
      * @return true if the stack is empty
      */
     public boolean isEmpty() {
         // FIXME complete this method
-        return false;
+        return elements == 0;
     }
 
     /**
@@ -31,6 +41,14 @@ public class Q4ArrayStack<T> {
      * @param value the value to add to this stack
      */
     public void push(T value) {
+        if(elements == data.length){
+            // Increase capacity if the array is full
+          Object[] newData = new Object[data.length*2];
+          System.arraycopy(data, 0, newData, 0, elements);
+          data = newData;
+        }
+        data[elements] = value;
+        elements ++;
         // FIXME complete this method
     }
 
@@ -42,7 +60,13 @@ public class Q4ArrayStack<T> {
      */
     public T pop() {
         // FIXME complete this method
-        return null;
+        if(isEmpty()){
+            throw new EmptyStackException();
+        }
+        elements--;
+        T poppedValue = (T) data[elements];
+        data[elements] = null;// dereference the popped value
+        return poppedValue;
     }
 
     /**
@@ -54,7 +78,9 @@ public class Q4ArrayStack<T> {
      */
     public T peek() {
         // FIXME complete this method
-        return null;
+        if(isEmpty()){
+            throw new EmptyStackException();}
+        return(T) data[elements-1];
     }
 
     /**
@@ -67,6 +93,14 @@ public class Q4ArrayStack<T> {
      */
     public boolean contains(T value) {
         // FIXME complete this method
+        if (value == null) {
+            return false;
+        }
+        for (int i = 0; i < elements; i++) {
+            if (value.equals(data[i])){
+                return true;
+            }
+        }
         return false;
     }
 
@@ -82,6 +116,13 @@ public class Q4ArrayStack<T> {
      */
     public String toString() {
         // FIXME complete this method
-        return null;
+        StringBuilder sb = new StringBuilder();
+        for (int i = elements-1; i >=0; i--) {
+             sb.append(data[i]);
+             if(i>0){
+                 sb.append(",");
+             }
+        }
+        return sb.toString();
     }
 }

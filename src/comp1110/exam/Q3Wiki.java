@@ -27,9 +27,26 @@ public class Q3Wiki {
      * @return true if the article was added to this wiki, or false if the
      * article was not added (because it already exists)
      */
+    private Map<Integer, Article> articles;// Map to store articles by ID
+    private Map<String, Set<Integer>> categories; // Map to store articles by category
+    private Map<Integer, Set<Integer>> links;// Map to store links between articles
+    public Q3Wiki(){
+        articles = new HashMap<>();
+        categories = new HashMap<>();
+        links = new HashMap<>();
+    }
     public boolean addArticle(int id, String name, String category, Set<String> editors) {
+        if(articles.containsKey(id)){
+            return false;
+        }
+        Article article = new Article(id, name, category, editors);
+        articles.put(id, article);
+        // Add the article to the category
+        Set<Integer> categoryArticles = categories.getOrDefault(category, new HashSet<>());
+        categoryArticles.add(id);
+        categories.put(category, categoryArticles);
         // FIXME complete this method
-        return false;
+        return true;
     }
 
     /**
@@ -41,7 +58,17 @@ public class Q3Wiki {
      */
     public boolean addLink(int fromArticle, int toArticle) {
         // FIXME complete this method
-        return false;
+        if (links.containsKey(fromArticle)) {
+            Set<Integer> linkedArticles = links.get(fromArticle);
+            if (linkedArticles.contains(toArticle)) {
+                return false; // Link already exists
+            }
+        } else {
+            links.put(fromArticle, new HashSet<>());
+        }
+
+        links.get(fromArticle).add(toArticle);
+        return true;
     }
 
     /**
@@ -55,15 +82,32 @@ public class Q3Wiki {
      */
     public boolean deleteArticle(int id) {
         // FIXME complete this method
-        return false;
+        Article article = articles.remove(id);
+        if (article == null) {
+            return false; // Article not found
+        }
+        String category = article.getCategory();
+        // Remove the article from the category
+        Set<Integer> categoryArticles = categories.get(category);
+        categoryArticles.remove(id);
+        if (categoryArticles.isEmpty()) {
+            categories.remove(category);
+        }
+        // Remove the article from the links
+        for (Set<Integer> linkedArticles : links.values()) {
+            linkedArticles.remove(id);
+        }
+
+        return true;
     }
 
     /**
      * @return the total number of articles in this wiki
      */
     public int getArticleCount() {
+
         // FIXME complete this method
-        return 0;
+        return articles.size();
     }
 
     /**
@@ -75,7 +119,14 @@ public class Q3Wiki {
      */
     public Set<Integer> getArticlesEditedBy(String editor) {
         // FIXME complete this method
-        return null;
+        Set<Integer> editedArticles = new HashSet<>();
+        for (Article article : articles.values()) {
+            if (article.getEditors().contains(editor)) {
+                editedArticles.add(article.getId());
+            }
+        }
+        return editedArticles;
+
     }
 
     /**
@@ -87,7 +138,8 @@ public class Q3Wiki {
      */
     public Set<Integer> getArticlesForCategory(String category) {
         // FIXME complete this method
-        return null;
+
+        return categories.getOrDefault(category, new HashSet<>());
     }
 
     /**
@@ -103,7 +155,11 @@ public class Q3Wiki {
      */
     public int getMaxIncomingLinks() {
         // FIXME complete this method
-        return 0;
+        int maxIncomingLinks = 0;
+        for (Set<Integer> linkedArticles : links.values()) {
+            maxIncomingLinks = Math.max(maxIncomingLinks, linkedArticles.size());
+        }
+        return maxIncomingLinks;
     }
 
     /**
@@ -121,7 +177,18 @@ public class Q3Wiki {
      */
     public int getNumCrossCategoryLinks() {
         // FIXME complete this method
-        return 0;
+
+        int crossCategoryLinks = 0;
+        for (Set<Integer> linkedArticles : links.values()) {
+            for (int toArticle : linkedArticles) {
+                Article fromArticle = articles.get(toArticle);
+                Article toArticleObj = articles.get(toArticle);
+                if (!fromArticle.getCategory().equals(toArticleObj.getCategory())) {
+                    crossCategoryLinks++;
+                }
+            }
+        }
+        return crossCategoryLinks;
     }
 
     /**
@@ -138,7 +205,13 @@ public class Q3Wiki {
      */
     public int getNumCategoriesEdited(String editor) {
         // FIXME complete this method
-        return 0;
+        Set<String> editedCategories = new HashSet<>();
+        for (Article article : articles.values()) {
+            if (article.getEditors().contains(editor)) {
+                editedCategories.add(article.getCategory());
+            }
+        }
+        return editedCategories.size();
     }
 
     /**
@@ -154,6 +227,39 @@ public class Q3Wiki {
      */
     public int getMaxArticlesInCategory() {
         // FIXME complete this method
-        return 0;
+
+        int maxArticles = 0;
+        for (Set<Integer> categoryArticles : categories.values()) {
+            maxArticles = Math.max(maxArticles, categoryArticles.size());
+        }
+        return maxArticles;
+    }
+
+    private static class Article {
+        private int id;
+        private String name;
+        private String category;
+        private Set<String> editors;
+        public Article(int id, String name, String category, Set<String> editors) {
+            this.id = id;
+            this.name = name;
+            this.category = category;
+            this.editors = editors;
+        }
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+        public String getCategory() {
+            return category;
+        }
+
+        public Set<String> getEditors() {
+            return editors;
+        }
+
     }
 }

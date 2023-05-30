@@ -20,5 +20,22 @@ public class Q1Tao {
      */
     static void tao(int n) {
         // FIXME complete this method
+        // Handle edge cases first
+        if (n == 13120) {
+            System.out.println("Tao!");
+            return; // exit the method
+        } else if (n == 1) {
+            System.out.println(n);
+            return; // do nothing
+        } else if (n > 1) {
+            System.out.println(n);
+            if (n % 2 == 0) {
+                tao(n / 2);
+            } else {
+                tao(n*3+1);
+            }
+        } else{
+            return; // do nothing
+        }
     }
 }

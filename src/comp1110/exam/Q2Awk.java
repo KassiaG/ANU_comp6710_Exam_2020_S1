@@ -1,6 +1,13 @@
 package comp1110.exam;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * COMP1110 Exam, Question 2
@@ -40,6 +47,32 @@ public class Q2Awk {
      *                                           the output file cannot be created
      */
     static void extractColumnCSV(String inputFilename, int column, String outputFilename, boolean sortOutput) throws IOException {
-        // FIXME complete this method
+        File inputFile = new File(inputFilename);
+        File outputFile = new File(outputFilename);
+
+        if (!inputFile.exists()) {
+            throw new NoSuchFileException("Input file not found: " + inputFilename);
+        }
+        List<String> lines = Files.readAllLines(inputFile.toPath());
+        List<String> values = new ArrayList<>();
+
+        for (String line : lines) {
+            String[] columns = line.split(",");
+            if (columns.length > column) {
+                String value = columns[column].trim();
+                if (!value.isEmpty()) {
+                    values.add(value);
+                }
+            }
+            // FIXME complete this method
+        }
+        if (sortOutput) {
+            Collections.sort(values);
+        }
+        try (PrintWriter writer = new PrintWriter(outputFile)) {
+            for (String value : values) {
+                writer.println(value);
+            }
+        }
     }
 }
