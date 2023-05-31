@@ -15,6 +15,17 @@ import java.util.Arrays;
  * and does not use any of the Java Collection classes.
  */
 public class Q4ArrayQueue<T> {
+    private static final int DEFAULT_CAPACITY = 10;
+    private Object[] elements;
+    private int size;
+    private int front;
+    private int rear;
+    public Q4ArrayQueue(){
+        elements = new Object[DEFAULT_CAPACITY];
+        size =0;
+        front = 0;
+        rear = 1;
+    }
     /**
      * An exception that is thrown when trying to dequeue or peek at an
      * empty queue. Do not modify this class.
@@ -28,7 +39,7 @@ public class Q4ArrayQueue<T> {
      */
     public boolean isEmpty() {
         // FIXME complete this method
-        return false;
+        return size == 0 ;
     }
 
     /**
@@ -37,7 +48,25 @@ public class Q4ArrayQueue<T> {
      * @param value the value to add to the queue
      */
     public void enqueue(T value) {
+        if(size == elements.length){
+            expandCapacity();
+        }
+        rear = (rear + 1) % elements.length;
+        elements[rear] = value;
+        size++;
         // FIXME complete this method
+    }
+
+    private void expandCapacity() {
+        int newCapacity = elements.length * 2;
+        Object[] newElements = new Object[newCapacity];
+        for (int i = 0; i < size; i++) {
+            int index = (front + i) % elements.length;
+            newElements[i] = elements[index];
+        }
+        elements = newElements;
+        front = 0;
+        rear = size - 1;
     }
 
     /**
@@ -48,7 +77,15 @@ public class Q4ArrayQueue<T> {
      */
     public T dequeue() throws EmptyQueueException {
         // FIXME complete this method
-        return null;
+        if (isEmpty()){
+            throw new EmptyQueueException();
+        }
+        T value = (T) elements[front];
+        elements[front] = null;
+        front = (front +1 ) % elements.length;
+        size--;
+        return value;
+
     }
 
     /**
@@ -59,8 +96,11 @@ public class Q4ArrayQueue<T> {
      * @throws EmptyQueueException if the queue is currently empty
      */
     public T first() throws EmptyQueueException {
+        if (isEmpty()){
+            throw new EmptyQueueException();
+        }
+        return (T) elements[front];
         // FIXME complete this method
-        return null;
     }
 
     /**
@@ -73,6 +113,13 @@ public class Q4ArrayQueue<T> {
      */
     public boolean contains(T value) {
         // FIXME complete this method
+        for (int i = 0; i < size; i++) {
+            int index = (front + i) % elements.length;
+            if (value.equals(elements[index])){
+                return true;
+            }
+
+        }
         return false;
     }
 
@@ -88,6 +135,18 @@ public class Q4ArrayQueue<T> {
      */
     public String toString() {
         // FIXME complete this method
-        return null;
+        if (isEmpty()){
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            int index = (front + i) % elements.length;
+            sb.append(elements[index]);
+            if (i<size-1){
+                sb.append(",");
+            }
+
+        }
+        return sb.toString();
     }
 }

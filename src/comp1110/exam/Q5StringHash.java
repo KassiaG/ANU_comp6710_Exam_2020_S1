@@ -12,7 +12,11 @@ public class Q5StringHash {
      * @return An integer hash of value in the range 0 ... buckets - 1.
      */
     public static int hash(String value, int buckets) {
+        long hash = 5381;
         // FIXME complete this method, without using Java's built-in hashCode() method
-        return -1;
+            for (int i = 0; i < value.length(); i++) {
+                hash = ((hash << 5) + hash) + value.charAt(i);
+            }
+            return (int) (hash % buckets);
     }
 }
